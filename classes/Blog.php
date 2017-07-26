@@ -3,7 +3,6 @@
 namespace
 
 {
-
     class Blog extends Module
     {
         public function __construct()
@@ -37,21 +36,47 @@ namespace
             if (!parent::install()
             || !$this->registerHook('displayHome')
             || !$this->registerHook('header')
+            || !$this->registerHook('displayBackOfficeHeader')
             // || !Configuration::updateValue('MYMODULE_NAME', 'my friend')
             ) {
                 return false;
             }
-            
+
             $sql = "CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."blog_posts`(
                 `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `title` VARCHAR(250) NOT NULL ,
                 `content` TEXT ,
                 `publication_date` DATE NOT NULL) DEFAULT CHARSET=utf8";
-                
-            if(!$result=Db::getInstance()->Execute($sql)){
+
+            if (!$result=Db::getInstance()->Execute($sql)) {
                 return false;
             }
-                
+            $tab = new Tab();
+            foreach (Language::getLanguages(true) as $lang) {
+                $tab->name[$lang['id_lang']] = $this->l('Blog');
+            }
+            $tab->module = $this->name;
+            $tab->id_parent = 0;
+            $tab->class_name = "AdminBlogController";
+            $tab->add();
+
+            $subTab1 = new Tab();
+            foreach (Language::getLanguages(true) as $lang) {
+                $subTab1->name[$lang['id_lang']] = $this->l('Ajouter un post');
+            }
+            $subTab1->module = $this->name;
+            $subTab1->id_parent = $tab->id;
+            $subTab1->class_name = "AdminBlogController";
+            $subTab1->add();
+
+            $subTab2 = new Tab();
+            foreach (Language::getLanguages(true) as $lang) {
+                $subTab2->name[$lang['id_lang']] = $this->l('Tous les posts');
+            }
+            $subTab2->module = $this->name;
+            $subTab2->id_parent = $tab->id;
+            $subTab2->class_name = "AdminBlogController";
+            $subTab2->add();
 
             return true;
         }
@@ -59,24 +84,39 @@ namespace
         public function uninstall()
         {
             if (!parent::uninstall()
+               || !$this->unregisterHook('displayHome')
+               || !$this->unregisterHook('header')
+               || !$this->unregisterHook('displayBackOfficeHeader')
             // || !Configuration::deleteByName('MYMODULE_NAME')
             ) {
                 return false;
             }
-            
+
             $sql = "DROP TABLE IF EXISTS `"._DB_PREFIX_."blog_posts`";
-                
-            if(!$result=Db::getInstance()->Execute($sql)){
+
+            if (!$result=Db::getInstance()->Execute($sql)) {
                 return false;
             }
-            
+
+            $moduleTabs = Tab::getCollectionFromModule($this->name);
+            if (!empty($moduleTabs)) {
+                foreach ($moduleTabs as $tab) {
+                    $tab->delete();
+                }
+            }
+
             return true;
+        }
+
+        public function hookDisplayBackOfficeHeader()
+        {
+            $this->context->controller->addCss($this->_path.'css/tab.css');
         }
 
         // public function getContent()
         // {
         //     $output = null;
-        // 
+        //
             // if (Tools::isSubmit('submit'.$this->name)) {
             //     $my_module_name = strval(Tools::getValue('MYMODULE_NAME'));
             //     if (!$my_module_name
@@ -95,7 +135,7 @@ namespace
         // {
         //     // Get default language
         //     $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
-        // 
+        //
         //     // Init Fields form array
         //     $fields_form[0]['form'] = array(
         //     'legend' => array(
@@ -115,19 +155,19 @@ namespace
         //     'class' => 'btn btn-default pull-right'
         //     )
         //     );
-        // 
+        //
         //     $helper = new HelperForm();
-        // 
+        //
         //     // Module, token and currentIndex
         //     $helper->module = $this;
         //     $helper->name_controller = $this->name;
         //     $helper->token = Tools::getAdminTokenLite('AdminModules');
         //     $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
-        // 
+        //
         //     // Language
         //     $helper->default_form_language = $default_lang;
         //     $helper->allow_employee_form_lang = $default_lang;
-        // 
+        //
         //     // Title and toolbar
         //     $helper->title = $this->displayName;
         //     $helper->show_toolbar = true;        // false -> remove toolbar
@@ -145,10 +185,10 @@ namespace
         //     'desc' => $this->l('Back to list')
         //     )
         //     );
-        // 
+        //
         //     // Load current value
         //     $helper->fields_value['MYMODULE_NAME'] = Configuration::get('MYMODULE_NAME');
-        // 
+        //
         //     return $helper->generateForm($fields_form);
         // }
         public function hookDisplayHome($params)
