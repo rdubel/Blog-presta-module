@@ -12,6 +12,7 @@ namespace
             $this->version = '1.0.0';
             $this->author = 'Thibault & Rémy';
             $this->need_instance = 0;
+            $this->context = Context::getContext();
             $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
             $this->bootstrap = true;
 
@@ -21,25 +22,6 @@ namespace
             $this->description = $this->l('This thing here creates a blog for your eshop.');
 
             $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-        }
-
-        public function install()
-        {
-            if (Shop::isFeatureActive()) {
-                Shop::setContext(Shop::CONTEXT_ALL);
-            }
-
-            if (!parent::install()
-            || !$this->registerHook('displayHome')
-            || !$this->registerHook('header')
-            || !$this->registerHook('displayBackOfficeHeader')
-            || !$this->installDb()
-            || !$this->installTab()
-            ) {
-                return false;
-            }
-
-            return true;
         }
 
         public function installDb() {
@@ -52,6 +34,8 @@ namespace
             if (!$result=Db::getInstance()->Execute($sql)) {
                 return false;
             }
+
+            return true;
         }
 
         public function installTab() {
@@ -62,7 +46,10 @@ namespace
             $tab->module = $this->name;
             $tab->id_parent = 0;
             $tab->class_name = "AdminBlogController";
-            $tab->add();
+
+            if (!$tab->add()) {
+                return false;
+            }
 
             $subTab1 = new Tab();
             foreach (Language::getLanguages(true) as $lang) {
@@ -71,7 +58,6 @@ namespace
             $subTab1->module = $this->name;
             $subTab1->id_parent = $tab->id;
             $subTab1->class_name = "AdminBlogController";
-            $subTab1->add();
 
             $subTab2 = new Tab();
             foreach (Language::getLanguages(true) as $lang) {
@@ -80,17 +66,28 @@ namespace
             $subTab2->module = $this->name;
             $subTab2->id_parent = $tab->id;
             $subTab2->class_name = "AdminBlogController";
-            $subTab2->add();
+
+            if (!$subTab1->add()
+                || !$subTab2->add()
+            ) {
+                return false;
+            }
+
+            return true;
         }
 
-        public function uninstall()
+        public function install()
         {
-            if (!parent::uninstall()
-               || !$this->unregisterHook('displayHome')
-               || !$this->unregisterHook('header')
-               || !$this->unregisterHook('displayBackOfficeHeader')
-               || !$this->uninstallDb()
-               || !$this->uninstallTab()
+            if (Shop::isFeatureActive()) {
+                Shop::setContext(Shop::CONTEXT_ALL);
+            }
+
+            if (!parent::install()
+            || !$this->installDb()
+            || !$this->installTab()
+            || !$this->registerHook('displayHome')
+            || !$this->registerHook('header')
+            || !$this->registerHook('displayBackOfficeHeader')
             ) {
                 return false;
             }
@@ -104,15 +101,50 @@ namespace
             if (!$result=Db::getInstance()->Execute($sql)) {
                 return false;
             }
+
+            return true;
         }
 
         public function uninstallTab() {
             $moduleTabs = Tab::getCollectionFromModule($this->name);
             if (!empty($moduleTabs)) {
-                foreach ($moduleTabs as $tab) {
-                    $tab->delete();
+
+                if (!$moduleTabs[2]->delete()) {
+                    var_dump($moduleTabs[2]->delete());
                 }
+                if (!$moduleTabs[1]->delete()) {
+                    var_dump($moduleTabs[1]->delete());
+                }
+                if (!$moduleTabs[0]->delete()) {
+                    var_dump($moduleTabs[3]->delete());
+                }
+
+                return true;
+                // foreach (array_reverse($moduleTabs) as $tab) {
+                //
+                //     if (!$tab->delete()
+                //     ) {
+                //         return false;
+                //     }
+                //
+                //     return true;
+                // }
             }
+        }
+
+        public function uninstall()
+        {
+            if (!parent::uninstall()
+               || !$this->uninstallDb()
+               || !$this->uninstallTab()
+               || !$this->unregisterHook('displayHome')
+               || !$this->unregisterHook('header')
+               || !$this->unregisterHook('displayBackOfficeHeader')
+            ) {
+                return false;
+            }
+
+            return true;
         }
 
         public function hookDisplayBackOfficeHeader()
