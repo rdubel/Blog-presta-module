@@ -11,6 +11,7 @@ namespace
             $this->tab = 'front_office_features';
             $this->version = '1.0.0';
             $this->author = 'Thibault & Rémy';
+            $this->bootstrap = true;
             $this->need_instance = 0;
             $this->context = Context::getContext();
             $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -25,7 +26,7 @@ namespace
         }
 
         public function installDb() {
-            $sql = "CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."blog_posts`(
+            $sql = "CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."blog_post`(
                 `id_blog_post` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `title` VARCHAR(250) NOT NULL ,
                 `content` TEXT ,
@@ -45,7 +46,7 @@ namespace
             }
             $tab->module = $this->name;
             $tab->id_parent = 0;
-            $tab->class_name = "AdminBlogController";
+            $tab->class_name = "AdminBlog";
 
             if (!$tab->add()) {
                 return false;
@@ -57,7 +58,7 @@ namespace
             }
             $subTab1->module = $this->name;
             $subTab1->id_parent = $tab->id;
-            $subTab1->class_name = "AdminBlogController";
+            $subTab1->class_name = "AdminBlog";
 
             $subTab2 = new Tab();
             foreach (Language::getLanguages(true) as $lang) {
@@ -65,7 +66,7 @@ namespace
             }
             $subTab2->module = $this->name;
             $subTab2->id_parent = $tab->id;
-            $subTab2->class_name = "AdminBlogController";
+            $subTab2->class_name = "AdminBlog";
 
             if (!$subTab1->add()
                 || !$subTab2->add()
@@ -96,7 +97,7 @@ namespace
         }
 
         public function uninstallDb() {
-            $sql = "DROP TABLE IF EXISTS `"._DB_PREFIX_."blog_posts`";
+            $sql = "DROP TABLE IF EXISTS `"._DB_PREFIX_."blog_post`";
 
             if (!$result=Db::getInstance()->Execute($sql)) {
                 return false;
@@ -109,27 +110,16 @@ namespace
             $moduleTabs = Tab::getCollectionFromModule($this->name);
             if (!empty($moduleTabs)) {
 
-                if (!$moduleTabs[2]->delete()) {
-                    var_dump($moduleTabs[2]->delete());
-                }
-                if (!$moduleTabs[1]->delete()) {
-                    var_dump($moduleTabs[1]->delete());
-                }
-                if (!$moduleTabs[0]->delete()) {
-                    var_dump($moduleTabs[3]->delete());
-                }
+                foreach ($moduleTabs as $tab) {
 
-                return true;
-                // foreach (array_reverse($moduleTabs) as $tab) {
-                //
-                //     if (!$tab->delete()
-                //     ) {
-                //         return false;
-                //     }
-                //
-                //     return true;
-                // }
+                    if (!$tab->delete()
+                    ) {
+                        return false;
+                    }
+
+                }
             }
+            return true;
         }
 
         public function uninstall()

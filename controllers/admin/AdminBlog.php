@@ -7,13 +7,32 @@ namespace
 
         public function __construct()
         {
-            $this->table = "blog_posts";
+            $this->table = "blog_post";
+            $this->display = 'blog_list';
             $this->className = 'Post';
             $this->lang = false;
-            $this->deleted = false;
-            $this->colorOnBackground = false;
-            $this->bulk_actions = array('delete' => array('text' => $this->l('Delete selected'), 'confirm' => 'Delete selected items?'));
-            $this->context = Context::getContext();
+
+            $this->fields_list = array(
+                'id_blog_post' => array(
+                    'title' => 'ID'
+                ),
+                'title' => array(
+                    'title' => 'Title',
+                ),
+                'content' => array(
+                    'title' => 'Content',
+                ),
+                'publication_date' => array(
+                    'title' => 'Publication date',
+                ),
+            );
+
+            $this->bulk_actions = array(
+                'delete' => array(
+                    'text' => 'Delete selected',
+                    'confirm' => 'Delete selected items?',
+                ),
+            );
             // définition de l'upload, chemin par défaut _PS_IMG_DIR_
             // $this->fieldImageSettings = array('name' => 'image', 'dir' => 'example');
             parent::__construct();
@@ -25,33 +44,6 @@ namespace
             $this->addRowAction('delete');
             $this->addRowAction('details');
 
-            $this->bulk_actions = array(
-                'delete' => array(
-                    'text' => 'Delete selected',
-                    'confirm' => 'Delete selected items?'
-                )
-            );
-
-            $this->fields_list = array(
-                'id_blog_post' => array(
-                    'title' => 'ID',
-                    'align' => 'center',
-                    'width' => 25
-                ),
-                'title' => array(
-                    'title' => 'Title',
-                    'width' => 'auto',
-                ),
-                'content' => array(
-                    'title' => 'Content',
-                    'width' => 'auto',
-                ),
-                'publication_date' => array(
-                    'title' => 'Publication date',
-                    'width' => 'auto',
-                ),
-            );
-
             $this->fields_list['position'] = array(
     			'title' => 'Position',
     			'width' => 70,
@@ -60,7 +52,7 @@ namespace
     		);
 
             $lists = parent::renderList();
-    		parent::initToolbar();
+    		// parent::initToolbar();
     		return $lists;
 
         }
@@ -103,60 +95,60 @@ namespace
         //     }
         //     die;
         // }
-        // public function renderForm()
-        // {
-        //     $this->fields_form = array(
-        //         'tinymce' => true,
-        //         'legend' => array(
-        //             'title' => $this->l('Example'),
-        //             'image' => '../img/admin/cog.gif'
-        //         ),
-        //         'input' => array(
-        //             array(
-        //                 'type' => 'text',
-        //                 'lang' => true,
-        //                 'label' => $this->l('Name:'),
-        //                 'name' => 'name',
-        //                 'size' => 40
-        //             ),
-        //             array(
-        //                 'type' => 'file',
-        //                 'label' => $this->l('Logo:'),
-        //                 'name' => 'image',
-        //                 'display_image' => true,
-        //                 'desc' => $this->l('Upload Example image from your computer')
-        //             ),
-        //             array(
-        //                 'type' => 'text',
-        //                 'label' => $this->l('Lorem:'),
-        //                 'name' => 'lorem',
-        //                 'readonly' => true,
-        //                 'disabled' => true,
-        //                 'size' => 40
-        //             ),
-        //             array(
-        //                 'type' => 'date',
-        //                 'name' => 'exampledate',
-        //             )
-        //         ),
-        //         'submit' => array(
-        //             'title' => $this->l('Save'),
-        //             'class' => 'button'
-        //         )
-        //     );
-        //     if (!($obj = $this->loadObject(true)))
-        //         return;
-        //     /* Thumbnail
-        //      * @todo Error, deletion of the image
-        //     */
-        //     $image = ImageManager::thumbnail(_PS_IMG_DIR_.'region/'.$obj->id.'.jpg', $this->table.'_'.(int)$obj->id.'.'.$this->imageType, 350, $this->imageType, true);
-        //     $this->fields_value = array(
-        //         'image' => $image ? $image : false,
-        //         'size' => $image ? filesize(_PS_IMG_DIR_.'example/'.$obj->id.'.jpg') / 1000 : false,
-        //     );
-        //     $this->fields_value = array('lorem' => 'ipsum');
-        //     return parent::renderForm();
-        // }
+        public function renderForm()
+        {
+            $this->fields_form = array(
+                'tinymce' => true,
+                'legend' => array(
+                    'title' => $this->l('Example'),
+                    'image' => '../img/admin/cog.gif'
+                ),
+                'input' => array(
+                    array(
+                        'type' => 'text',
+                        'lang' => true,
+                        'label' => $this->l('Name:'),
+                        'name' => 'name',
+                        'size' => 40
+                    ),
+                    array(
+                        'type' => 'file',
+                        'label' => $this->l('Logo:'),
+                        'name' => 'image',
+                        'display_image' => true,
+                        'desc' => $this->l('Upload Example image from your computer')
+                    ),
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Lorem:'),
+                        'name' => 'lorem',
+                        'readonly' => true,
+                        'disabled' => true,
+                        'size' => 40
+                    ),
+                    array(
+                        'type' => 'date',
+                        'name' => 'exampledate',
+                    )
+                ),
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                    'class' => 'button'
+                )
+            );
+            if (!($obj = $this->loadObject(true)))
+                return;
+            /* Thumbnail
+             * @todo Error, deletion of the image
+            */
+            $image = ImageManager::thumbnail(_PS_IMG_DIR_.'region/'.$obj->id.'.jpg', $this->table.'_'.(int)$obj->id.'.'.$this->imageType, 350, $this->imageType, true);
+            $this->fields_value = array(
+                'image' => $image ? $image : false,
+                'size' => $image ? filesize(_PS_IMG_DIR_.'example/'.$obj->id.'.jpg') / 1000 : false,
+            );
+            $this->fields_value = array('lorem' => 'ipsum');
+            return parent::renderForm();
+        }
         // public function postProcess()
         // {
         //     if (Tools::isSubmit('submitAdd'.$this->table))
