@@ -21,10 +21,6 @@ namespace
             $this->description = $this->l('This thing here creates a blog for your eshop.');
 
             $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
-
-            // if (!Configuration::get('MYMODULE_NAME')) {
-            //     $this->warning = $this->l('No name provided');
-            // }
         }
 
         public function install()
@@ -37,13 +33,18 @@ namespace
             || !$this->registerHook('displayHome')
             || !$this->registerHook('header')
             || !$this->registerHook('displayBackOfficeHeader')
-            // || !Configuration::updateValue('MYMODULE_NAME', 'my friend')
+            || !$this->installDb()
+            || !$this->installTab()
             ) {
                 return false;
             }
 
+            return true;
+        }
+
+        public function installDb() {
             $sql = "CREATE TABLE IF NOT EXISTS `"._DB_PREFIX_."blog_posts`(
-                `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                `id_blog_post` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 `title` VARCHAR(250) NOT NULL ,
                 `content` TEXT ,
                 `publication_date` DATE NOT NULL) DEFAULT CHARSET=utf8";
@@ -51,6 +52,9 @@ namespace
             if (!$result=Db::getInstance()->Execute($sql)) {
                 return false;
             }
+        }
+
+        public function installTab() {
             $tab = new Tab();
             foreach (Language::getLanguages(true) as $lang) {
                 $tab->name[$lang['id_lang']] = $this->l('Blog');
@@ -77,8 +81,6 @@ namespace
             $subTab2->id_parent = $tab->id;
             $subTab2->class_name = "AdminBlogController";
             $subTab2->add();
-
-            return true;
         }
 
         public function uninstall()
@@ -87,25 +89,30 @@ namespace
                || !$this->unregisterHook('displayHome')
                || !$this->unregisterHook('header')
                || !$this->unregisterHook('displayBackOfficeHeader')
-            // || !Configuration::deleteByName('MYMODULE_NAME')
+               || !$this->uninstallDb()
+               || !$this->uninstallTab()
             ) {
                 return false;
             }
 
+            return true;
+        }
+
+        public function uninstallDb() {
             $sql = "DROP TABLE IF EXISTS `"._DB_PREFIX_."blog_posts`";
 
             if (!$result=Db::getInstance()->Execute($sql)) {
                 return false;
             }
+        }
 
+        public function uninstallTab() {
             $moduleTabs = Tab::getCollectionFromModule($this->name);
             if (!empty($moduleTabs)) {
                 foreach ($moduleTabs as $tab) {
                     $tab->delete();
                 }
             }
-
-            return true;
         }
 
         public function hookDisplayBackOfficeHeader()
