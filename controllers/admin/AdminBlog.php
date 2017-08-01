@@ -97,45 +97,45 @@ namespace
         // }
         // // public function renderForm()
         // {
-        //     $this->fields_form = array(
-        //         'tinymce' => true,
-        //         'legend' => array(
-        //             'title' => $this->l('Example'),
-        //             'image' => '../img/admin/cog.gif'
-        //         ),
-        //         'input' => array(
-        //             array(
-        //                 'type' => 'text',
-        //                 'lang' => true,
-        //                 'label' => $this->l('Name:'),
-        //                 'name' => 'name',
-        //                 'size' => 40
-        //             ),
-        //             array(
-        //                 'type' => 'file',
-        //                 'label' => $this->l('Logo:'),
-        //                 'name' => 'image',
-        //                 'display_image' => true,
-        //                 'desc' => $this->l('Upload Example image from your computer')
-        //             ),
-        //             array(
-        //                 'type' => 'text',
-        //                 'label' => $this->l('Lorem:'),
-        //                 'name' => 'lorem',
-        //                 'readonly' => true,
-        //                 'disabled' => true,
-        //                 'size' => 40
-        //             ),
-        //             array(
-        //                 'type' => 'date',
-        //                 'name' => 'exampledate',
-        //             )
-        //         ),
-        //         'submit' => array(
-        //             'title' => $this->l('Save'),
-        //             'class' => 'button'
-        //         )
-        //     );
+            $this->fields_form = array(
+                'tinymce' => true,
+                'legend' => array(
+                    'title' => $this->l('Example'),
+                    'image' => '../img/admin/cog.gif'
+                ),
+                'input' => array(
+                    array(
+                        'type' => 'text',
+                        'lang' => true,
+                        'label' => $this->l('Name:'),
+                        'name' => 'name',
+                        'size' => 40
+                    ),
+                    array(
+                        'type' => 'file',
+                        'label' => $this->l('Logo:'),
+                        'name' => 'image',
+                        'display_image' => true,
+                        'desc' => $this->l('Upload Example image from your computer')
+                    ),
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Lorem:'),
+                        'name' => 'lorem',
+                        'readonly' => true,
+                        'disabled' => true,
+                        'size' => 40
+                    ),
+                    array(
+                        'type' => 'date',
+                        'name' => 'exampledate',
+                    )
+                ),
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                    'class' => 'button'
+                )
+            );
         //     if (!($obj = $this->loadObject(true)))
         //         return;
         //     /* Thumbnail
