@@ -64,5 +64,5 @@ namespace
             $this->addRowAction('delete');
             parent::__construct();
         }
-    }
+        }
 }
