@@ -60,6 +60,8 @@ namespace
                     'confirm' => 'Delete selected items?',
                 ),
             );
+
+            $this->addRowAction('delete');
             parent::__construct();
         }
     }
