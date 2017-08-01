@@ -20,6 +20,13 @@ namespace
     		),
     	);
 
+        public function getPosts() {
+            $sql = "SELECT * FROM `"._DB_PREFIX_."blog_post`";
+            if ($result=Db::getInstance()->ExecuteS($sql)) {
+                return $result;
+            }
+        }
+
 
     }
 }
