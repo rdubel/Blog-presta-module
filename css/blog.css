@@ -1,1 +1,10 @@
+.blog-list {
+    display: flex;
+    flex-wrap: wrap;
+}
 
+.blog-list .blog-post {
+    width: 33%;
+    align-self: stretch;
+    border: 1px solid black;
+}

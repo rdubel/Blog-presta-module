@@ -27,6 +27,13 @@ namespace
             }
         }
 
+        public function getPost($id) {
+            $sql = "SELECT * FROM `"._DB_PREFIX_."blog_post` WHERE id_blog_post=".$id;
+            if ($result=Db::getInstance()->getRow($sql)) {
+                return $result;
+            }
+        }
+
 
     }
 }
