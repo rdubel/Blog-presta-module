@@ -19,9 +19,7 @@ class blogpostslistModuleFrontController extends ModuleFrontController
             $post['link'] = $this->context->link->getModuleLink('blog', 'postdetail', array('id' => $post['id_blog_post']));
             $posts[] = $post;
         }
-        $this->context->smarty->assign(array(
-            'posts' => $posts
-        ));
+        $this->context->smarty->assign('posts', $posts);
     }
 }
 

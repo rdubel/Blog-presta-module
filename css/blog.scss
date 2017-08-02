@@ -1,0 +1,16 @@
+.blog-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .blog-post {
+        padding: 1em;
+        width: 32%;
+        align-self: stretch;
+        border: 1px solid black;
+
+        h4 {
+            font-size: 3em;
+        }
+    }
+}
