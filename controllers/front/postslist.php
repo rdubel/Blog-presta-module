@@ -18,8 +18,9 @@ namespace
             $sql->from('blog_post');
 
             $posts = [];
+            $posts_list = Db::getInstance()->executeS($sql);
 
-            if ($posts_list = Db::getInstance()->executeS($sql)) {
+            if ($posts_list) {
 
                 foreach ($posts_list as $post) {
 
