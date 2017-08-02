@@ -12,12 +12,11 @@ class blogpostdetailModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
         $this->setTemplate('post_detail.tpl');
+
         $post_id = Tools::getValue('id');
         $postObj = new BlogPost();
         $post = $postObj->getPost($post_id);
-        $this->context->smarty->assign(array(
-            'post' => $post
-        ));
+        $this->context->smarty->assign('post', $post);
     }
 }
 

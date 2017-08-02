@@ -21,17 +21,26 @@ namespace
     	);
 
         public function getPosts() {
-            $sql = "SELECT * FROM `"._DB_PREFIX_."blog_post`";
-            if ($result=Db::getInstance()->ExecuteS($sql)) {
+            $sql = new DbQuery();
+            $sql->select('*');
+            $sql->from('blog_post');
+            $result=Db::getInstance()->ExecuteS($sql);
+            if ($result) {
                 return $result;
             }
+            return false;
         }
 
         public function getPost($id) {
-            $sql = "SELECT * FROM `"._DB_PREFIX_."blog_post` WHERE id_blog_post=".$id;
-            if ($result=Db::getInstance()->getRow($sql)) {
+            $sql = new DbQuery();
+            $sql->select('*');
+            $sql->from('blog_post');
+            $sql->where('id_blog_post ='.$id);
+            $result=Db::getInstance()->getRow($sql);
+            if ($result) {
                 return $result;
             }
+            return false;
         }
 
 
